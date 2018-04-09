@@ -24,7 +24,7 @@ class enemy
 	{
 		hp = 3;
 		max_hp = 3;
-		max_speed = 3;
+		max_speed = 4;
 		size.x = 100;
 		size.y = 100;
 
@@ -35,7 +35,7 @@ class enemy
 
 
 //
-// This function realize enemys speed !!!!!!!
+// This function realize enemys speed
 //
 void enemys_set_speed(class enemy* e_massive, int max_of_enemys, sf::Vector2f hero_position)
 {
@@ -69,6 +69,31 @@ void enemys_set_speed(class enemy* e_massive, int max_of_enemys, sf::Vector2f he
 				e_massive[cur_enemy].speed.x = 0;
 			}
 		}
+		cur_enemy++;
+	}
+}
+
+
+//
+// This function realize mob spawn
+//
+void mob_spawn(class enemy* e_massive, int max_of_enemys, sf::Time cur_time)
+{
+	int cur_enemy = 0;
+	int i_time = cur_time.asMilliseconds();
+	i_time = 100; //i_time - (i_time / 600 * 600); 
+
+	while(cur_enemy != max_of_enemys)
+	{
+		if(e_massive[cur_enemy].is_alive == false)
+		{
+			e_massive[cur_enemy].hp = 3;
+			e_massive[cur_enemy].is_alive = true;
+			e_massive[cur_enemy].sprite.setPosition(i_time , 100);
+		}
+
+		i_time = i_time + 50;
+
 		cur_enemy++;
 	}
 }

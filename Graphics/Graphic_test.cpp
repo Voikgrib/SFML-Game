@@ -106,19 +106,24 @@ int game_start(void)
 
 	int max_bullets = 250;
 	int current_bullet = 0;
+	int max_enemy = 20;
+	int cur_enemy = 0;
 
 	class hero main_hero;
 	class bullet *hero_bullets = new bullet[max_bullets];
 	class bullet *cur_bullet = NULL;
-	class enemy test_enemy;
+	class enemy *test_enemy = new enemy[max_enemy];
 
 	///* TEST ENTITY !
 
-	test_enemy.sprite.setTexture(enemy_texture);
-	test_enemy.sprite.setPosition(500, 500);
-	test_enemy.sprite.setOrigin(test_enemy.size.x/2, test_enemy.size.y/2);
-	test_enemy.is_alive = true;
+	while(cur_enemy != max_enemy)
+	{
+		test_enemy[cur_enemy].sprite.setTexture(enemy_texture);
+		test_enemy[cur_enemy].sprite.setOrigin(test_enemy[cur_enemy].size.x/2, test_enemy[cur_enemy].size.y/2);
+		test_enemy[cur_enemy].is_alive = false;
 
+		cur_enemy++;
+	}
 	// TEST ENTITY ! */
 
     while (window.isOpen())		// Main sycle
@@ -147,23 +152,26 @@ int game_start(void)
 		SHOOTING(Up	  , 0, -main_hero.bullet_speed )
 		SHOOTING(Down , 0, main_hero.bullet_speed  )
 
-		is_bullet_hit(hero_bullets, max_bullets, &test_enemy, 1);
-		kill_dead_enemys(&test_enemy, 1); // TEST
-		enemys_set_speed(&test_enemy, 1, main_hero.sprite.getPosition()); // TEST
+		mob_spawn(test_enemy, max_enemy, main_clock.getElapsedTime());
+
+		is_bullet_hit(hero_bullets, max_bullets, test_enemy, max_enemy);
+		kill_dead_enemys(test_enemy, max_enemy); // TEST
+		enemys_set_speed(test_enemy, max_enemy, main_hero.sprite.getPosition()); // TEST
 		
 
 		bullet_move(hero_bullets, max_bullets, main_clock.getElapsedTime());
-		enemy_rotation(&test_enemy, 1); // TEST
-		enemy_movement(&test_enemy, 1); // TEST
+		enemy_rotation(test_enemy, max_enemy); // TEST
+		enemy_movement(test_enemy, max_enemy); // TEST
 
         window.clear();
 		bullet_draw(hero_bullets, max_bullets);
-		enemys_draw(&test_enemy, 1); // TEST
+		enemys_draw(test_enemy, max_enemy); // TEST
         window.draw(main_hero.sprite);
         window.display();
     }
 
 	delete [] hero_bullets;
+	delete [] test_enemy;
 
 	return 0;
 }
