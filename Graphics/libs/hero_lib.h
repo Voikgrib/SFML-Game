@@ -5,6 +5,7 @@
 //!
 //======================================================================
 
+#define MAX_HP	10
 
 //-----------------------------------------------------------------
 //!
@@ -19,12 +20,19 @@ class hero
 	class my_vector<int> position;
 
 	sf::Texture texture;
+	sf::Texture hp_texture_one;
+	sf::Texture hp_texture_two;
 	sf::Sprite sprite;
+	sf::Sprite hp_sprite_one;
+	sf::Sprite hp_sprite_two[MAX_HP];
 	sf::Time shoot_cooldown;
+	sf::Time damage_cooldown;
+	sf::Time last_damade_time;
 	int speed;
 	int bullet_speed;
 	int hp;
 	int max_hp;
+	bool is_alive;
 
 	//=============//
 	// Consrtuctor //
@@ -32,23 +40,49 @@ class hero
 
 	hero()
 	{
+		is_alive = true;
 		size.x = 100;
 		size.y = 100;
-		position.x = 200;
-		position.y = 200;
-		speed = 5;
+		position.x = 700;
+		position.y = 450;
+		speed = 6;
 		bullet_speed = 10;
-		hp = 5;
-		max_hp = 5;
+		hp = 7;
+		max_hp = MAX_HP;
 		shoot_cooldown = sf::seconds(0.2f);
+		damage_cooldown = sf::seconds(1.2f);
 
 		printf("Hero inisialized\n");
 		texture.setSmooth(true);
-		texture.loadFromFile("test_pizza.png");
+		if(!texture.loadFromFile("test_pizza.png"))
+			throw;
+
 		sprite.setTexture(texture);
 		sprite.setPosition(position.x, position.y);
 		sprite.setOrigin(size.x/2, size.y/2);
+		if(!hp_texture_one.loadFromFile("hp_one.png"))
+			throw;
+
+		hp_sprite_one.setTexture(hp_texture_one);
+		if(!hp_texture_two.loadFromFile("hp_two.png"))
+			throw;
+		
+
+		int i = 0;
+
+		while(i != max_hp)
+		{
+			hp_sprite_two[i].setTexture(hp_texture_two);
+			hp_sprite_two[i].setPosition(10, 40 + 40 * i);
+
+			i++;
+		}
 	}
+
+	//~hero()
+	//{
+	//	delete [] hp_sprite_two;
+	//}
 
 	//==========//
 	// Functons //
@@ -56,6 +90,41 @@ class hero
 	
 
 };
+
+
+//------------------------------------------------------------------------
+//!
+//! This function draws hp
+//!
+//------------------------------------------------------------------------
+void hp_draw(class hero cur_hero)
+{
+	int cur_hp = 0;
+	int cur_counter = 0;
+
+	if(cur_hero.hp > 0)
+	{
+		while(cur_hp != (cur_hero.hp / 2))
+		{
+			Pwindow->draw(cur_hero.hp_sprite_two[cur_hp]);
+	
+			cur_hp++;
+			cur_counter++;
+			cur_counter++;
+		}
+	
+		if(cur_counter != cur_hero.hp)
+		{
+			cur_hp++;
+			cur_hero.hp_sprite_one.setPosition(10, 40 * cur_hp);
+			Pwindow->draw(cur_hero.hp_sprite_one);
+		}
+	}	
+}
+
+
+
+
 
 
 

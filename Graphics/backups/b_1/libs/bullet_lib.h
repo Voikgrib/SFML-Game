@@ -15,11 +15,11 @@ class bullet
 	class my_vector<int> speed;
 	class my_vector<int> size;
 
-	bool is_alive;
-
 	int damage;
 	
+
 	bool is_enemy_bullet;
+	bool is_alive;
 
 	sf::Sprite sprite;		
 	sf::Time time_of_born;  
@@ -163,12 +163,9 @@ bool is_bullet_hit(class bullet* b_massive, int max_of_bullets, class enemy* e_m
 			cur_bullet_border = b_massive[cur_bullet].sprite.getGlobalBounds();
 			cur_enemy_border = e_massive[cur_enemy].sprite.getGlobalBounds();
 
-			if(b_massive[cur_bullet].is_alive == true && 
-			   cur_enemy_border.intersects(cur_bullet_border) &&
-			   e_massive[cur_enemy].is_alive == true)
+			if(cur_enemy_border.intersects(cur_bullet_border) && e_massive[cur_enemy].is_alive == true && b_massive[cur_bullet].is_alive == true)
 			{
 				b_massive[cur_bullet].is_alive = false;
-				b_massive[cur_bullet].sprite.setPosition(-100, -100);
 				e_massive[cur_enemy].hp = e_massive[cur_enemy].hp - b_massive[cur_bullet].damage;
 			}
 			cur_bullet++;
