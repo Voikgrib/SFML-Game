@@ -8,20 +8,20 @@
 //=======================================================================
 
 
-class bullet
+class bullet : public game_obj
 {
 	public:
 
-	class my_vector<int> speed;
-	class my_vector<int> size;
+	//class my_vector<int> speed;
+	//class my_vector<int> size;
 
-	bool is_alive;
+	//bool is_alive;
 
 	int damage;
 	
 	bool is_enemy_bullet;
 
-	sf::Sprite sprite;		
+	//sf::Sprite sprite;		
 	sf::Time time_of_born;  
 	sf::Time time_of_life;
 
@@ -55,6 +55,27 @@ class bullet
 	  //==========//
 	 // Functons //
 	//==========//
+
+	virtual void move(void) override
+	{
+		printf("bullet_draw 1\n");
+		sf::Time cur_time = Pclock->getElapsedTime();
+
+		if(is_alive == true && (cur_time - time_of_born > time_of_life))
+			is_alive = false;
+
+		if(is_alive == true)
+		{
+			sprite.move(speed.x, speed.y);
+			sprite.rotate(7);
+		}
+	}
+
+	virtual void draw(void) override
+	{
+		if(is_alive == true)
+			Pwindow->draw(sprite);
+	}
 
 };
 
