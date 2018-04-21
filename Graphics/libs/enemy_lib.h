@@ -5,21 +5,20 @@
 //!
 //=======================================================================
 
-class enemy
+class enemy : public game_obj
 {
 	public:
 
-	class my_vector<int> speed;
-	class my_vector<int> size;
+	//class my_vector<int> speed;
+	//class my_vector<int> size;
 
-	bool is_alive;
+	//bool is_alive;
 
 	int hp;
 	int max_hp;
 	int max_speed;
 
-
-	sf::Sprite sprite;
+	//sf::Sprite sprite;
 
 	enemy()
 	{
@@ -30,6 +29,26 @@ class enemy
 		size.y = 100;
 
 		is_alive = false;
+	}
+
+	// FUNCTIONS
+
+	virtual void move(void) override
+	{
+		printf("enemy_move\n");
+
+		if(is_alive == true)
+		{
+			printf("enemy_move 1\n");
+			sprite.move(speed.x, speed.y);
+			printf("enemy_move 2\n");
+		}
+	}
+
+	virtual void draw(void) override
+	{
+		if(is_alive == true)
+			Pwindow->draw(sprite);
 	}
 
 };
@@ -162,7 +181,7 @@ void enemy_movement(class enemy* e_massive, int max_of_enemys)
 	{
 		if(e_massive[cur_enemy].is_alive == true)
 		{
-			 e_massive[cur_enemy].sprite.move(e_massive[cur_enemy].speed.x, e_massive[cur_enemy].speed.y);
+			 e_massive[cur_enemy].move();
 		}
 
 		cur_enemy++;
@@ -245,7 +264,7 @@ void enemys_draw(class enemy* e_massive, int max_of_enemys)
 	while(cur_enemy != max_of_enemys)
 	{
 		if(e_massive[cur_enemy].is_alive == true)
-			Pwindow->draw(e_massive[cur_enemy].sprite);
+			e_massive[cur_enemy].draw();
 
 		cur_enemy++;
 	}
