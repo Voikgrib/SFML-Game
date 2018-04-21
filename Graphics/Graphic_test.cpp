@@ -22,10 +22,13 @@ class my_vector
 // Global consts and so on
 
 const int max_bullets = 100;
+const int Max_obj = 1000;
 sf::RenderWindow *Pwindow;
+sf::Clock *Pclock;
 
 // Including class libs
 
+#include"libs/manager_lib.h"
 #include"libs/hero_lib.h"
 #include"libs/enemy_lib.h"
 #include"libs/bullet_lib.h"
@@ -61,12 +64,31 @@ sf::RenderWindow *Pwindow;
 				cur_bullet->time_of_born = cur_time;											\
 				last_shoot_time = cur_time;														\
 			}																					\
-		}
+		}														
+
+
+#define ADDER_DECLARE( cur_class )																\
+void cur_class##_adder(class manager* all_objs, class cur_class* cur_massive, int max)			\
+{																								\
+	int i = 0;																					\
+																								\
+	while(i != max)																				\
+	{																							\
+		all_objs->add( & cur_massive[i]);														\
+																								\
+		i++;																					\
+	}																							\
+}																								\
+
+
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF DEFINES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 int game_start(void);
 sf::Texture texture_upload(char *str);
+
+ADDER_DECLARE( bullet )
+ADDER_DECLARE( enemy )
 
 //===================================================================
 //! This programm contain my trying in graphics
@@ -103,6 +125,8 @@ int game_start(void)
 	sf::Vector2f hero_position;
 	sf::Time cur_time = main_clock.getElapsedTime();
 	sf::Time last_shoot_time;
+
+	Pclock = &main_clock;
 
 	sf::Texture enemy_texture;
 	sf::Texture hero_bullet_texture;
@@ -153,6 +177,8 @@ int game_start(void)
 	class enemy *test_enemy = new enemy[max_enemy];	
 	class heals *heals_massive = new heals[max_heal];
 
+	class manager all_objs;
+
 	// INIT HEAL     	is work, but not heal
 
 	int cur_heal = 0;
@@ -176,6 +202,12 @@ int game_start(void)
 	}
 
 	// TEST ENTITY ! */
+
+	//all_objs.add(hero_bullets);
+	//all_objs.add(test_enemy, max_enemy);
+
+	bullet_adder(&all_objs, hero_bullets, max_bullets);
+	enemy_adder(&all_objs, test_enemy, max_enemy);
 
     while (window.isOpen())		// Main sycle
     {
@@ -211,17 +243,13 @@ int game_start(void)
 		kill_dead_enemys(test_enemy, max_enemy, heals_massive, max_heal);
 		enemys_set_speed(test_enemy, max_enemy, main_hero.sprite.getPosition());
 		
-
-		bullet_move(hero_bullets, max_bullets, main_clock.getElapsedTime());
 		enemy_rotation(test_enemy, max_enemy);
-		enemy_movement(test_enemy, max_enemy);
 
         window.clear();
 		window.draw(backgrownd_sprite);
 		hp_draw(main_hero);
-		bullet_draw(hero_bullets, max_bullets);
 		heals_draw(heals_massive, max_heal);
-		enemys_draw(test_enemy, max_enemy); 
+		all_objs.run();
 		if(main_hero.is_alive == true)
         	window.draw(main_hero.sprite);
 		else
