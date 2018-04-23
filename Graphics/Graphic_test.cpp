@@ -203,11 +203,11 @@ int game_start(void)
 
 	// TEST ENTITY ! */
 
-	//all_objs.add(hero_bullets);
-	//all_objs.add(test_enemy, max_enemy);
+	//bullet_adder(&all_objs, hero_bullets, max_bullets);
+	//enemy_adder(&all_objs, test_enemy, max_enemy);
 
-	bullet_adder(&all_objs, hero_bullets, max_bullets);
-	enemy_adder(&all_objs, test_enemy, max_enemy);
+	all_objs.adder(hero_bullets, max_bullets, sizeof(class bullet));
+	all_objs.adder(test_enemy, max_enemy, sizeof(class enemy));
 
     while (window.isOpen())		// Main sycle
     {
