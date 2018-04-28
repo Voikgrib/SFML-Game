@@ -49,6 +49,30 @@ class manager
 	 // Functions //
 	//===========//
 
+	
+	void adder(void* new_elem, int size, unsigned long int size_of_type)
+	{
+		int i = maximum;
+		unsigned long int copy = 0;
+
+		if(absolute_max <= maximum + size)
+		{
+			printf("TOO MUCH OBJECTS!\n");
+			assert(false);
+		}
+		
+		while(copy != size)
+		{
+			massive[i] = (class game_obj*) (new_elem + (copy * size_of_type));
+
+
+			copy++;
+			i++;
+		}
+
+		maximum = maximum + copy;
+	}
+
 	void add(class game_obj* new_elem)
 	{
 		if(absolute_max <= maximum)
@@ -60,6 +84,7 @@ class manager
 			massive[maximum++] = new_elem;
 	}
 
+	// Move & draw
 	void run()
 	{
 		int cur_elem = 0;
@@ -67,7 +92,7 @@ class manager
 		while(cur_elem != maximum)	
 		{
 			printf("all_move	1\n");
-			if(massive[cur_elem] != NULL) // ERROR HERE
+			if(massive[cur_elem] != NULL)
 			{
 				printf("all_move	1.1\n");
 				printf("cur_elem = %p\n", massive[cur_elem]);

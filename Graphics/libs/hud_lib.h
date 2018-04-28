@@ -5,8 +5,6 @@
 //!
 //=================================================================
 
-// NT NT NT NT NT
-
 void hp_drawer(sf::Sprite hp_sprite, class hero *main_hero)
 {
 

@@ -76,60 +76,8 @@ class bullet : public game_obj
 		if(is_alive == true)
 			Pwindow->draw(sprite);
 	}
-
 };
 
-
-//============================================================================
-//!
-//! This function draw every alive bullet
-//!
-//! @param[in] class bullet* b_massive - pointer on bullet massive
-//! @param[in] int max_of_bullets - max elements of bullet massive
-//!
-//============================================================================
-void bullet_draw(class bullet* b_massive, int max_of_bullets)
-{
-	int cur_bullet = 0;
-
-	while(cur_bullet != max_of_bullets)
-	{
-		if(b_massive[cur_bullet].is_alive == true)
-			{
-				 Pwindow->draw(b_massive[cur_bullet].sprite);
-			}
-	
-		cur_bullet++;
-	}
-}
-
-//============================================================================
-//!
-//! This function move every alive bullet and destroy every old bullet
-//!
-//! @param[in] class bullet* b_massive - pointer on bullet massive
-//! @param[in] int max_of_bullets - max elements of bullet massive
-//! @param[in] sf::Time cur_time - current time (needs to find old bullet)
-//!
-//============================================================================
-void bullet_move(class bullet* b_massive, int max_of_bullets, sf::Time cur_time)
-{
-	int cur_bullet = 0;
-
-	while(cur_bullet != max_of_bullets)
-	{
-		if(b_massive[cur_bullet].is_alive == true && (cur_time - b_massive[cur_bullet].time_of_born > b_massive[cur_bullet].time_of_life))
-			b_massive[cur_bullet].is_alive = false;
-
-		if(b_massive[cur_bullet].is_alive == true)
-		{
-			b_massive[cur_bullet].sprite.move(b_massive[cur_bullet].speed.x, b_massive[cur_bullet].speed.y);
-			b_massive[cur_bullet].sprite.rotate(7);
-		}
-
-		cur_bullet++;
-	}
-}
 
 //============================================================================
 //!

@@ -20,9 +20,9 @@ class hero
 	class my_vector<int> position;
 
 	sf::Texture texture;
+	sf::Sprite sprite;
 	sf::Texture hp_texture_one;
 	sf::Texture hp_texture_two;
-	sf::Sprite sprite;
 	sf::Sprite hp_sprite_one;
 	sf::Sprite hp_sprite_two[MAX_HP];
 	sf::Time shoot_cooldown;
@@ -90,6 +90,21 @@ class hero
 	
 
 };
+
+
+//
+//! This function check is pizza on plane?
+//
+bool is_pizza_not_on_plane(sf::Vector2f hero_position)
+{
+	if((hero_position.x > 1200 || hero_position.x < 300) && (hero_position.y > 200 && hero_position.y < 700))
+		return true;
+	else if((hero_position.x > 1100 || hero_position.x < 400) && (hero_position.y < 200 || hero_position.y > 700))
+		return true;
+
+
+	return false;
+}
 
 
 //------------------------------------------------------------------------

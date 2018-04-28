@@ -66,29 +66,29 @@ sf::Clock *Pclock;
 			}																					\
 		}														
 
-
-#define ADDER_DECLARE( cur_class )																\
-void cur_class##_adder(class manager* all_objs, class cur_class* cur_massive, int max)			\
-{																								\
-	int i = 0;																					\
-																								\
-	while(i != max)																				\
-	{																							\
-		all_objs->add( & cur_massive[i]);														\
-																								\
-		i++;																					\
-	}																							\
-}																								\
-
+   //==========================================//
+  // Press "f" to pay respect for this kostil //
+ //==========================================//
+//                                          //__________________________________________\
+//#define ADDER_DECLARE( cur_class )													\
+void cur_class##_adder(class manager* all_objs, class cur_class* cur_massive, int max)	\
+{																						\
+	int i = 0;																			\
+																						\
+	while(i != max)																		\
+	{																					\
+		all_objs->add( & cur_massive[i]);												\
+																						\
+		i++;																			\
+	}																					\
+}																						\
+________________________________________________________________________________________\
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF DEFINES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 int game_start(void);
 sf::Texture texture_upload(char *str);
-
-ADDER_DECLARE( bullet )
-ADDER_DECLARE( enemy )
 
 //===================================================================
 //! This programm contain my trying in graphics
@@ -128,6 +128,7 @@ int game_start(void)
 
 	Pclock = &main_clock;
 
+	sf::Texture vilka_texture;
 	sf::Texture enemy_texture;
 	sf::Texture hero_bullet_texture;
 	sf::Texture backgrownd_texture;
@@ -143,6 +144,7 @@ int game_start(void)
 		backgrownd_texture = texture_upload("backgrownd.jpg");
 		hero_bullet_texture = texture_upload("shoot.png");
 		enemy_texture = texture_upload("enemy.png");
+		vilka_texture = texture_upload("vilka.png");
 	}
 	catch(char *str)
 	{
@@ -174,12 +176,13 @@ int game_start(void)
 	
 	class bullet *hero_bullets = new bullet[max_bullets];
 	class bullet *cur_bullet = NULL;
-	class enemy *test_enemy = new enemy[max_enemy];	
+	class enemy *test_enemy = new enemy[max_enemy];
+	class enemy_vilka vilka(100, 100, 3, 1600, 1167);			 // !
 	class heals *heals_massive = new heals[max_heal];
 
 	class manager all_objs;
 
-	// INIT HEAL     	is work, but not heal
+	// INIT HEAL  
 
 	int cur_heal = 0;
 
@@ -191,6 +194,14 @@ int game_start(void)
 	}
 
 	///* TEST ENTITY !
+	
+	vilka.sprite.setTexture(vilka_texture);
+	vilka.is_alive = true;
+	vilka.sprite.setTextureRect(sf::IntRect(0,0,1600,1000));
+	vilka.sprite.setScale(0.5, 0.5);
+	//vilka.sprite.scale(-1, 1);
+	vilka.sprite.setOrigin(vilka.size.x - 50, vilka.size.y - 100); // !
+	vilka.sprite.setPosition(0, 0);
 
 	while(cur_enemy != max_enemy)
 	{
@@ -206,8 +217,10 @@ int game_start(void)
 	//bullet_adder(&all_objs, hero_bullets, max_bullets);
 	//enemy_adder(&all_objs, test_enemy, max_enemy);
 
+	
 	all_objs.adder(hero_bullets, max_bullets, sizeof(class bullet));
 	all_objs.adder(test_enemy, max_enemy, sizeof(class enemy));
+	all_objs.adder(&vilka, 1, sizeof(class enemy));
 
     while (window.isOpen())		// Main sycle
     {
@@ -242,6 +255,13 @@ int game_start(void)
 		player_hit(&main_hero, test_enemy, max_enemy, main_clock.getElapsedTime());
 		kill_dead_enemys(test_enemy, max_enemy, heals_massive, max_heal);
 		enemys_set_speed(test_enemy, max_enemy, main_hero.sprite.getPosition());
+		is_heal_use(&main_hero, heals_massive, max_heal);
+
+		vilka.set_speed(main_hero.sprite.getPosition());
+		vilka.respawn(main_hero.sprite.getPosition());
+
+		if(vilka.collide(main_hero.sprite.getPosition()))
+			main_hero.hp = 0;
 		
 		enemy_rotation(test_enemy, max_enemy);
 
