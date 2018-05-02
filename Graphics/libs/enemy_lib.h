@@ -315,13 +315,13 @@ void mob_spawn(class enemy* e_massive, int max_of_enemys, sf::Time cur_time)
 			e_massive[cur_enemy].is_alive = true;
 
 			if(i_time % 4 == 0)
-				e_massive[cur_enemy].sprite.setPosition(700 , 100);
+				e_massive[cur_enemy].sprite.setPosition(700 , -100);
 			else if(i_time % 4 == 1)
-				e_massive[cur_enemy].sprite.setPosition(700 , 800);
+				e_massive[cur_enemy].sprite.setPosition(700 , 1000);
 			else if(i_time % 4 == 2)
-				e_massive[cur_enemy].sprite.setPosition(300 , 450);
+				e_massive[cur_enemy].sprite.setPosition(-100 , 450);
 			else if(i_time % 4 == 3)
-				e_massive[cur_enemy].sprite.setPosition(1100 , 450);
+				e_massive[cur_enemy].sprite.setPosition(1600 , 450);
 
 
 		}

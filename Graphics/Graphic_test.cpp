@@ -1,9 +1,12 @@
 
+#include <SFML/Audio.hpp>
+//#include <SFML/Music.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <stdio.h>
 #include <assert.h>
 #include <cstdlib>
+
 
 //------------------------------------------
 //! Class realise vector kak v geometrii
@@ -134,11 +137,24 @@ int game_start(void)
 	sf::Texture backgrownd_texture;
 	sf::Texture dead_screen_texture;
 	sf::Texture heal_texture;
+	sf::Texture pizza_texture[3];
+
+	sf::Music main_music;
+
+	if(!main_music.openFromFile("music/main_theme.ogg"))
+		assert(false);
+	main_music.setLoop(true); 
+	main_music.setVolume(100); 
+	main_music.play();
+	
 
 	class hero main_hero;
 	
 	try
 	{
+		pizza_texture[0] = texture_upload("test_pizza.png");
+		pizza_texture[1] = texture_upload("test_pizza_1.png");
+		pizza_texture[2] = texture_upload("test_pizza_2.png");
 		heal_texture = texture_upload("hp_one.png");
 		dead_screen_texture = texture_upload("dead_screen.png");
 		backgrownd_texture = texture_upload("backgrownd.jpg");
@@ -154,7 +170,6 @@ int game_start(void)
 
 	sf::Sprite backgrownd_sprite;
 	sf::Sprite dead_screen_sprite;
-	//sf::Sprite *heal_sprite = new sf::Sprite [max_heal];
 	dead_screen_sprite.setTexture(dead_screen_texture);
 	dead_screen_sprite.setOrigin(256/2, 144/2); 
 	dead_screen_sprite.setPosition(screen_lengh/2, screen_high/2);
@@ -162,10 +177,6 @@ int game_start(void)
 	backgrownd_sprite.setScale(backgr_lengh, backgr_high);
 	backgrownd_sprite.setPosition(0, 0);
 
-	
-
-		//texture.loadFromFile(texture_adr);
-		//sprite.setTexture(texture);
 
 	int max_heal = 5;
 	int max_bullets = 250;
@@ -199,7 +210,6 @@ int game_start(void)
 	vilka.is_alive = true;
 	vilka.sprite.setTextureRect(sf::IntRect(0,0,1600,1000));
 	vilka.sprite.setScale(0.5, 0.5);
-	//vilka.sprite.scale(-1, 1);
 	vilka.sprite.setOrigin(vilka.size.x - 50, vilka.size.y - 100); // !
 	vilka.sprite.setPosition(0, 0);
 
@@ -213,18 +223,25 @@ int game_start(void)
 	}
 
 	// TEST ENTITY ! */
-
-	//bullet_adder(&all_objs, hero_bullets, max_bullets);
-	//enemy_adder(&all_objs, test_enemy, max_enemy);
-
 	
 	all_objs.adder(hero_bullets, max_bullets, sizeof(class bullet));
 	all_objs.adder(test_enemy, max_enemy, sizeof(class enemy));
 	all_objs.adder(&vilka, 1, sizeof(class enemy));
 
+	int num_texture = 0;
+
     while (window.isOpen())		// Main sycle
     {
 		cur_time = main_clock.getElapsedTime();
+		num_texture = (((int) cur_time.asMilliseconds()) % 1000);
+		//num_texture = (int) (cur_time.asMilliseconds() / );
+
+		if(0 <= num_texture && num_texture <= 50)
+			main_hero.sprite.setTexture(pizza_texture[1]);
+		else if(50 <= num_texture && num_texture <= 100)
+			main_hero.sprite.setTexture(pizza_texture[2]);
+		else
+			main_hero.sprite.setTexture(pizza_texture[0]);
 
         sf::Event event;
         while (window.pollEvent(event))
