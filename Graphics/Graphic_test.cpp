@@ -31,6 +31,7 @@ sf::Clock *Pclock;
 
 // Including class libs
 
+#include"libs/animation_lib.h"
 #include"libs/manager_lib.h"
 #include"libs/hero_lib.h"
 #include"libs/enemy_lib.h"
@@ -90,6 +91,7 @@ ________________________________________________________________________________
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF DEFINES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
+int intro_start(void);
 int game_start(void);
 sf::Texture texture_upload(char *str);
 
@@ -124,9 +126,11 @@ int game_start(void)
 
 	Pwindow = &window;
 
+	int Err_code = intro_start();
+
 	sf::Clock main_clock;
-	sf::Vector2f hero_position;
 	sf::Time cur_time = main_clock.getElapsedTime();
+	sf::Vector2f hero_position;
 	sf::Time last_shoot_time;
 
 	Pclock = &main_clock;
@@ -138,6 +142,10 @@ int game_start(void)
 	sf::Texture dead_screen_texture;
 	sf::Texture heal_texture;
 	sf::Texture pizza_texture[3];
+	c_animation pizza_animation(3);
+	pizza_animation.frame_massive[0].frame_delay = sf::seconds(2);
+	pizza_animation.frame_massive[1].frame_delay = sf::seconds(0.15f);
+	pizza_animation.frame_massive[2].frame_delay = sf::seconds(0.15f);
 
 	sf::Music main_music;
 
@@ -152,9 +160,9 @@ int game_start(void)
 	
 	try
 	{
-		pizza_texture[0] = texture_upload("test_pizza.png");
-		pizza_texture[1] = texture_upload("test_pizza_1.png");
-		pizza_texture[2] = texture_upload("test_pizza_2.png");
+		pizza_animation.frame_massive[0].texture = texture_upload("test_pizza.png");
+		pizza_animation.frame_massive[1].texture = texture_upload("test_pizza_1.png");
+		pizza_animation.frame_massive[2].texture = texture_upload("test_pizza_2.png");
 		heal_texture = texture_upload("hp_one.png");
 		dead_screen_texture = texture_upload("dead_screen.png");
 		backgrownd_texture = texture_upload("backgrownd.jpg");
@@ -233,15 +241,9 @@ int game_start(void)
     while (window.isOpen())		// Main sycle
     {
 		cur_time = main_clock.getElapsedTime();
-		num_texture = (((int) cur_time.asMilliseconds()) % 1000);
-		//num_texture = (int) (cur_time.asMilliseconds() / );
 
-		if(0 <= num_texture && num_texture <= 50)
-			main_hero.sprite.setTexture(pizza_texture[1]);
-		else if(50 <= num_texture && num_texture <= 100)
-			main_hero.sprite.setTexture(pizza_texture[2]);
-		else
-			main_hero.sprite.setTexture(pizza_texture[0]);
+		pizza_animation.a_run(main_clock.getElapsedTime());
+		main_hero.sprite.setTexture(pizza_animation.frame_massive[pizza_animation.cur_frame].texture);
 
         sf::Event event;
         while (window.pollEvent(event))
@@ -301,6 +303,96 @@ int game_start(void)
 	return 0;
 }
 
+
+//================================================================
+//!
+//! This function play intro
+//!
+//================================================================
+int intro_start(void)
+{
+	c_animation intro_animation(12);
+	sf::Texture words;
+	sf::Sprite s_word;
+
+	intro_animation.frame_massive[0].frame_delay = sf::seconds(0.8f);
+	intro_animation.frame_massive[1].frame_delay = sf::seconds(0.8f);
+	intro_animation.frame_massive[2].frame_delay = sf::seconds(0.8f);
+	intro_animation.frame_massive[3].frame_delay = sf::seconds(0.8f);
+
+	intro_animation.frame_massive[4].frame_delay = sf::seconds(0.8f);
+	intro_animation.frame_massive[5].frame_delay = sf::seconds(0.8f);
+	intro_animation.frame_massive[6].frame_delay = sf::seconds(0.8f);
+	intro_animation.frame_massive[7].frame_delay = sf::seconds(0.8f);
+
+	intro_animation.frame_massive[8].frame_delay = sf::seconds(1);
+	intro_animation.frame_massive[9].frame_delay = sf::seconds(1);
+	intro_animation.frame_massive[10].frame_delay = sf::seconds(1);
+	intro_animation.frame_massive[11].frame_delay = sf::seconds(4.7f);
+
+
+	try
+	{
+		words = texture_upload("intro/word.png");
+
+		intro_animation.frame_massive[0].texture = texture_upload("intro/intro1.png");
+		intro_animation.frame_massive[1].texture = texture_upload("intro/intro2.png");
+		intro_animation.frame_massive[2].texture = texture_upload("intro/intro3.png");
+		intro_animation.frame_massive[3].texture = texture_upload("intro/intro4.png");
+
+		intro_animation.frame_massive[4].texture = texture_upload("intro/intro5.png");
+		intro_animation.frame_massive[5].texture = texture_upload("intro/intro6.png");
+		intro_animation.frame_massive[6].texture = texture_upload("intro/intro7.png");
+		intro_animation.frame_massive[7].texture = texture_upload("intro/intro8.png");
+
+		intro_animation.frame_massive[8].texture = texture_upload("intro/intro9.png");
+		intro_animation.frame_massive[9].texture = texture_upload("intro/intro10.png");
+		intro_animation.frame_massive[10].texture = texture_upload("intro/intro11.png");
+		intro_animation.frame_massive[11].texture = texture_upload("intro/intro12.png");
+	}
+	catch(char *str)
+	{
+		printf("!!! Error with open %s !!!\n", str);
+		assert(false);
+	}
+
+	sf::Sprite intro_sprite;
+	sf::Clock main_clock;
+	sf::Time cur_time = main_clock.getElapsedTime();
+	s_word.setTexture(words);
+	s_word.setPosition(10,10);
+	s_word.setScale(3, 3);
+	intro_sprite.setPosition(300, 300);
+	intro_sprite.setScale(3, 3);
+	sf::Event event;
+
+	while(!sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+	{
+        sf::Event event;
+        while (Pwindow->pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+			{
+                Pwindow->close();
+				printf("> It is not error, it is costil! C-:\n");
+				assert(false);
+			}
+        }
+
+		cur_time = main_clock.getElapsedTime();
+		intro_animation.a_run(main_clock.getElapsedTime());
+		intro_sprite.setTexture(intro_animation.frame_massive[intro_animation.cur_frame].texture);
+
+		Pwindow->clear();
+		Pwindow->draw(intro_sprite);
+		Pwindow->draw(s_word);
+		Pwindow->display();
+	}
+
+	Pwindow->clear();	
+
+	return 0;	
+}
 
 //================================================================
 //!
