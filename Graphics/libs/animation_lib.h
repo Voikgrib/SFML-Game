@@ -50,8 +50,10 @@ class c_animation
 		}
 	}
 
-
-
+	sf::Texture &get_cur_texture(void)
+	{
+		return frame_massive[cur_frame].texture;
+	}
 };
 
 

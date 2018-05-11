@@ -154,6 +154,8 @@ class enemy : public game_obj
 	int hp;
 	int max_hp;
 	int max_speed;
+	
+	//c_animation dead_animation;
 
 	//sf::Sprite sprite;
 
@@ -431,7 +433,7 @@ class heals *heal_finder(class heals *heal_massive, int max_of_heals)
 	{
 		if(heal_massive[heal_num].is_alive == false)
 		{
-			heal_massive[heal_num].is_alive = true;
+			//heal_massive[heal_num].is_alive = true;
 			heal_massive[heal_num].hp_heal = rand() % 2 + 1;
 			return &heal_massive[heal_num];
 		}
@@ -446,7 +448,7 @@ class heals *heal_finder(class heals *heal_massive, int max_of_heals)
 
 //===============================================================================
 //!
-//! This function kills enemy, if it hp < 0
+//! This function start_dead animation && kills enemy, if it hp < 0
 //!
 //! @param[in] class enemy* e_massive - pointer on enemys massive
 //! @param[in] int max_of_enemys - max elements of enemys massive
@@ -472,8 +474,13 @@ void kill_dead_enemys(class enemy* e_massive, int max_of_enemys, class heals *he
 				if(cur_heal != NULL)
 				{
 					cur_heal->position = e_massive[cur_enemy].sprite.getPosition();
-					cur_heal->sprite.setPosition(cur_heal->position.x, cur_heal->position.y);
-					cur_heal->is_alive = true;
+					if((20 <= cur_heal->position.x && cur_heal->position.x <= 1500 - 20) &&
+						(20 <= cur_heal->position.y && cur_heal->position.y <= 900 - 20))
+					{					
+						cur_heal->sprite.setPosition(cur_heal->position.x, cur_heal->position.y);
+						cur_heal->is_alive = true;
+					}
+					Kill_counter++;
 				}
 			}
 		}

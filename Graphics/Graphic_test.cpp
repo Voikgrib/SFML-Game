@@ -1,11 +1,11 @@
 
 #include <SFML/Audio.hpp>
-//#include <SFML/Music.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <stdio.h>
 #include <assert.h>
 #include <cstdlib>
+#include <cmath>
 
 
 //------------------------------------------
@@ -26,6 +26,7 @@ class my_vector
 
 const int max_bullets = 100;
 const int Max_obj = 1000;
+int Kill_counter = 0;
 sf::RenderWindow *Pwindow;
 sf::Clock *Pclock;
 
@@ -36,6 +37,7 @@ sf::Clock *Pclock;
 #include"libs/hero_lib.h"
 #include"libs/enemy_lib.h"
 #include"libs/bullet_lib.h"
+#include"libs/boss_lib.h"
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ START OF DEFINES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
@@ -128,6 +130,9 @@ int game_start(void)
 
 	int Err_code = intro_start();
 
+	if(Err_code == 1)
+		return 0;
+
 	sf::Clock main_clock;
 	sf::Time cur_time = main_clock.getElapsedTime();
 	sf::Vector2f hero_position;
@@ -157,6 +162,8 @@ int game_start(void)
 	
 
 	class hero main_hero;
+
+	c_boss burger(30, 30);
 	
 	try
 	{
@@ -218,7 +225,7 @@ int game_start(void)
 	vilka.is_alive = true;
 	vilka.sprite.setTextureRect(sf::IntRect(0,0,1600,1000));
 	vilka.sprite.setScale(0.5, 0.5);
-	vilka.sprite.setOrigin(vilka.size.x - 50, vilka.size.y - 100); // !
+	vilka.sprite.setOrigin(vilka.size.x - 50, vilka.size.y - 100);
 	vilka.sprite.setPosition(0, 0);
 
 	while(cur_enemy != max_enemy)
@@ -235,6 +242,8 @@ int game_start(void)
 	all_objs.adder(hero_bullets, max_bullets, sizeof(class bullet));
 	all_objs.adder(test_enemy, max_enemy, sizeof(class enemy));
 	all_objs.adder(&vilka, 1, sizeof(class enemy));
+	all_objs.adder(&burger, 1, sizeof(class c_boss));
+	all_objs.adder(burger.m_bull_1, burger.max_1, sizeof(class bullet));
 
 	int num_texture = 0;
 
@@ -243,7 +252,7 @@ int game_start(void)
 		cur_time = main_clock.getElapsedTime();
 
 		pizza_animation.a_run(main_clock.getElapsedTime());
-		main_hero.sprite.setTexture(pizza_animation.frame_massive[pizza_animation.cur_frame].texture);
+		main_hero.sprite.setTexture(pizza_animation.get_cur_texture());
 
         sf::Event event;
         while (window.pollEvent(event))
@@ -251,6 +260,13 @@ int game_start(void)
             if (event.type == sf::Event::Closed)
                 window.close();
         }
+
+		// test is_work!
+		//if(sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+		//	burger.hp++;
+		//
+		//if(sf::Keyboard::isKeyPressed(sf::Keyboard::O))
+		//	burger.hp--;
 
 		MOVEMENT(D, main_hero.speed , 0 , 90)
 		MOVEMENT(A, -main_hero.speed, 0 , 270)
@@ -270,6 +286,13 @@ int game_start(void)
 		mob_spawn(test_enemy, max_enemy, main_clock.getElapsedTime());
 
 		is_bullet_hit(hero_bullets, max_bullets, test_enemy, max_enemy);
+		if(burger.is_alive == true)
+		{
+			burger.is_damage_get(hero_bullets, max_bullets);
+			burger.super_intellect(&main_hero);
+			burger.shooting(&main_hero);
+			is_hero_shooted(&main_hero, burger.m_bull_1, burger.max_1);
+		}
 		main_hero.is_alive = is_hero_alive(&main_hero);
 		player_hit(&main_hero, test_enemy, max_enemy, main_clock.getElapsedTime());
 		kill_dead_enemys(test_enemy, max_enemy, heals_massive, max_heal);
@@ -289,6 +312,8 @@ int game_start(void)
 		hp_draw(main_hero);
 		heals_draw(heals_massive, max_heal);
 		all_objs.run();
+		if(burger.is_alive == true)
+			burger.hud_draw();
 		if(main_hero.is_alive == true)
         	window.draw(main_hero.sprite);
 		else
@@ -374,14 +399,14 @@ int intro_start(void)
             if (event.type == sf::Event::Closed)
 			{
                 Pwindow->close();
-				printf("> It is not error, it is costil! C-:\n");
-				assert(false);
+				//printf("> It is not error, it is costil! C-:\n");
+				return 1;
 			}
         }
 
 		cur_time = main_clock.getElapsedTime();
 		intro_animation.a_run(main_clock.getElapsedTime());
-		intro_sprite.setTexture(intro_animation.frame_massive[intro_animation.cur_frame].texture);
+		intro_sprite.setTexture(intro_animation.get_cur_texture());
 
 		Pwindow->clear();
 		Pwindow->draw(intro_sprite);

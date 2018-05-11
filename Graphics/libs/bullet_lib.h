@@ -67,7 +67,8 @@ class bullet : public game_obj
 		if(is_alive == true)
 		{
 			sprite.move(speed.x, speed.y);
-			sprite.rotate(7);
+			if(is_enemy_bullet == false)
+				sprite.rotate(7);
 		}
 	}
 
@@ -144,6 +145,31 @@ bool is_bullet_hit(class bullet* b_massive, int max_of_bullets, class enemy* e_m
 		}
 
 		cur_enemy++;
+	}
+}
+
+void is_hero_shooted(class hero *cur_hero, class bullet* b_massive, int max_of_bullets)
+{
+	int i = 0;
+	sf::FloatRect cur_border;
+	sf::FloatRect cur_bullet_border;
+
+	cur_border = cur_hero->sprite.getGlobalBounds();
+
+	while(i != max_of_bullets)
+	{
+		if(b_massive[i].is_alive == true && b_massive[i].is_enemy_bullet == true)
+		{
+			cur_bullet_border = b_massive[i].sprite.getGlobalBounds();
+				
+			if(cur_border.intersects(cur_bullet_border))
+			{
+				b_massive[i].is_alive = false;
+				b_massive[i].sprite.setPosition(-100, -100);
+				cur_hero->hp--;
+			}
+		}
+		i++;
 	}
 }
 
