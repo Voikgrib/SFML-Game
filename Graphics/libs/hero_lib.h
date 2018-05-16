@@ -45,7 +45,7 @@ class hero
 		size.y = 100;
 		position.x = 700;
 		position.y = 450;
-		speed = 6;
+		speed = 8;
 		bullet_speed = 10;
 		hp = 7;
 		max_hp = MAX_HP;

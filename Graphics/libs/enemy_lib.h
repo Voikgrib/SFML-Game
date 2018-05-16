@@ -465,6 +465,7 @@ void kill_dead_enemys(class enemy* e_massive, int max_of_enemys, class heals *he
 		if(e_massive[cur_enemy].hp <= 0)
 		{
 			e_massive[cur_enemy].is_alive = false;
+			Kill_counter++;
 			is_heal = rand() % 2 + 1;
 
 			if(is_heal == 1)
@@ -480,7 +481,6 @@ void kill_dead_enemys(class enemy* e_massive, int max_of_enemys, class heals *he
 						cur_heal->sprite.setPosition(cur_heal->position.x, cur_heal->position.y);
 						cur_heal->is_alive = true;
 					}
-					Kill_counter++;
 				}
 			}
 		}

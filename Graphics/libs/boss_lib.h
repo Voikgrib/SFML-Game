@@ -20,6 +20,8 @@ class c_boss : public game_obj
 	sf::Sprite hp_sprite;
 	sf::Sprite hp_bar_sprite;
 
+	//c_animation *sec_bull_atimation(4);
+
 	int max_1;
 	int max_2;
 	int hp;
@@ -36,6 +38,8 @@ class c_boss : public game_obj
 		max_2 = max_of_bullets_2;
 		m_bull_1 = new bullet [max_1];
 		m_bull_2 = new bullet [max_2]; // NI
+		//sec_bull_atimation = new c_animation [max_2];
+
 
 		speed.x = 0;
 		speed.y = 0;
@@ -61,6 +65,26 @@ class c_boss : public game_obj
 			m_bull_1[i].sprite.setScale(1.5, 1.5);
 			m_bull_1[i].size.x = 12 * 1.5;
 			m_bull_1[i].size.y = 74 * 1.5;
+
+			i++;
+		}
+
+		i = 0;
+
+		while(i != max_2)
+		{
+			m_bull_2[i].is_enemy_bullet = true;
+			m_bull_2[i].is_alive = false;
+			m_bull_2[i].sprite.setTexture(all_texture);
+			m_bull_2[i].sprite.setTextureRect(sf::IntRect(21, 26, 32, 13));
+			m_bull_2[i].sprite.setScale(1.5, 1.5);
+			m_bull_2[i].size.x = 32 * 1.5;
+			m_bull_2[i].size.y = 13 * 1.5;
+			
+			//sec_bull_atimation[i].frame_massive[1].texture.setTexture(all_texture);
+			//sec_bull_atimation[i].frame_massive[1].texture.setTextureRect.sf::IntRect(21, 26, 22, 13);
+			
+
 			i++;
 		}
 
@@ -166,13 +190,18 @@ class c_boss : public game_obj
 		sf::Vector2f attack_vector = cur_hero->sprite.getPosition() - sprite.getPosition();	// vector to hero
 		class bullet *cur_bullet_1 = bullet_finder(m_bull_1, max_1);
 		cur_bullet_1->is_alive = false;
+		class bullet *cur_bullet_2 = bullet_finder(m_bull_2, max_2);
+		cur_bullet_2->is_alive = false;
+
+		int random = (rand() % 15) - 7;
+
 
 		sf::Time cur_time = Pclock->getElapsedTime();
 		sf::Vector2f cur_position;
 
 		cur_position = sprite.getPosition();
 
-		if(last_shoot_time + cooldown < cur_time && cur_bullet_1 != NULL)
+		if(last_shoot_time + cooldown < cur_time && cur_bullet_1 != NULL && cur_bullet_2 != NULL)
 		{
 			cur_bullet_1->is_alive = true;
 			cur_bullet_1->sprite.setRotation(-(atan(attack_vector.x / attack_vector.y) * 180.0f / 3.14f));
@@ -182,6 +211,14 @@ class c_boss : public game_obj
 			cur_bullet_1->speed.y = attack_vector.y / 35 + 1;
 			cur_bullet_1->time_of_born = cur_time;
 			// NI need itit second massive of bullets
+			if(hp <= max_hp / 2)
+			{
+				cur_bullet_2->is_alive = true;
+				cur_bullet_2->sprite.setPosition(cur_position.x, cur_position.y);
+				cur_bullet_2->speed.x = attack_vector.x / 35 + 1;
+				cur_bullet_2->speed.y = attack_vector.y / 35 + random;
+				cur_bullet_2->time_of_born = cur_time;			
+			}
 		}
 	}
 

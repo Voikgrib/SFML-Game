@@ -27,6 +27,8 @@ class my_vector
 const int max_bullets = 100;
 const int Max_obj = 1000;
 int Kill_counter = 0;
+int Boss_kills = 0;
+int Difficulty = 0;
 sf::RenderWindow *Pwindow;
 sf::Clock *Pclock;
 
@@ -96,6 +98,8 @@ ________________________________________________________________________________
 int intro_start(void);
 int game_start(void);
 sf::Texture texture_upload(char *str);
+
+int main_menu_proc(int cur_menu_part);
 
 //===================================================================
 //! This programm contain my trying in graphics
@@ -193,7 +197,7 @@ int game_start(void)
 	backgrownd_sprite.setPosition(0, 0);
 
 
-	int max_heal = 5;
+	int max_heal = 20;
 	int max_bullets = 250;
 	int current_bullet = 0;
 	int max_enemy = 20;
@@ -244,6 +248,9 @@ int game_start(void)
 	all_objs.adder(&vilka, 1, sizeof(class enemy));
 	all_objs.adder(&burger, 1, sizeof(class c_boss));
 	all_objs.adder(burger.m_bull_1, burger.max_1, sizeof(class bullet));
+	all_objs.adder(burger.m_bull_2, burger.max_2, sizeof(class bullet));
+
+	burger.is_alive = false;
 
 	int num_texture = 0;
 
@@ -261,12 +268,10 @@ int game_start(void)
                 window.close();
         }
 
-		// test is_work!
-		//if(sf::Keyboard::isKeyPressed(sf::Keyboard::P))
-		//	burger.hp++;
-		//
-		//if(sf::Keyboard::isKeyPressed(sf::Keyboard::O))
-		//	burger.hp--;
+		if(Kill_counter >= 50 && burger.is_alive == false)
+			burger.is_alive = true;		//boss spawn
+		else if(Kill_counter >= 50 && burger.is_alive == true)
+			Kill_counter = 0;
 
 		MOVEMENT(D, main_hero.speed , 0 , 90)
 		MOVEMENT(A, -main_hero.speed, 0 , 270)
@@ -292,6 +297,12 @@ int game_start(void)
 			burger.super_intellect(&main_hero);
 			burger.shooting(&main_hero);
 			is_hero_shooted(&main_hero, burger.m_bull_1, burger.max_1);
+			is_hero_shooted(&main_hero, burger.m_bull_2, burger.max_2);
+			if(burger.hp < 0)
+			{
+				burger.is_alive = false;
+				Boss_kills++;
+			}
 		}
 		main_hero.is_alive = is_hero_alive(&main_hero);
 		player_hit(&main_hero, test_enemy, max_enemy, main_clock.getElapsedTime());
@@ -433,6 +444,44 @@ sf::Texture texture_upload(char *str)
 
 	return cur_texture;
 }
+
+
+//================================================================
+//!
+//! This function realise main menu interaction
+//!
+//================================================================
+int main_menu_proc(int cur_menu_part)
+{
+	int my_error = 0;
+
+	if(cur_menu_part == 0)
+		my_error = game_start();   
+	else if(cur_menu_part == 1)
+	{
+		if(Difficulty != 3)
+			Difficulty++;
+		else
+			Difficulty = 1;
+	}
+		
+	return my_error;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
