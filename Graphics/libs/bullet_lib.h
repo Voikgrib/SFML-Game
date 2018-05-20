@@ -58,7 +58,7 @@ class bullet : public game_obj
 
 	virtual void move(void) override
 	{
-		printf("bullet_draw 1\n");
+		//printf("bullet_draw 1\n");
 		sf::Time cur_time = Pclock->getElapsedTime();
 
 		if(is_alive == true && (cur_time - time_of_born > time_of_life))

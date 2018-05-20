@@ -230,9 +230,9 @@ class c_boss : public game_obj
 	{
 		if(is_alive == true)
 		{
-			printf("boss_move 1\n");
+			//printf("boss_move 1\n");
 			sprite.move(speed.x, speed.y);
-			printf("boss_move 2\n");
+			//printf("boss_move 2\n");
 		}
 	}
 

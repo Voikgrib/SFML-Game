@@ -40,13 +40,13 @@ class enemy_vilka : public game_obj
 
 	virtual void move(void) override
 	{
-		printf("enemy_move\n");
+		//printf("enemy_move\n");
 
 		if(is_alive == true)  // + is_player on tarelka?
 		{
-			printf("enemy_move 1\n");
+			//printf("enemy_move 1\n");
 			sprite.move(speed.x, speed.y);
-			printf("enemy_move 2\n");
+			//printf("enemy_move 2\n");
 		}
 	}
 
@@ -174,13 +174,13 @@ class enemy : public game_obj
 
 	virtual void move(void) override
 	{
-		printf("enemy_move\n");
+		//printf("enemy_move\n");
 
 		if(is_alive == true)
 		{
-			printf("enemy_move 1\n");
+			//printf("enemy_move 1\n");
 			sprite.move(speed.x, speed.y);
-			printf("enemy_move 2\n");
+			//printf("enemy_move 2\n");
 		}
 	}
 

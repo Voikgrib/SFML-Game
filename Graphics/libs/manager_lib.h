@@ -91,17 +91,17 @@ class manager
 
 		while(cur_elem != maximum)	
 		{
-			printf("all_move	1\n");
+			//printf("all_move	1\n");
 			if(massive[cur_elem] != NULL)
 			{
-				printf("all_move	1.1\n");
-				printf("cur_elem = %p\n", massive[cur_elem]);
+				//printf("all_move	1.1\n");
+				//printf("cur_elem = %p\n", massive[cur_elem]);
 				massive[cur_elem]->move();
 				massive[cur_elem]->draw();
-				printf("all_move	1.2\n");			
+				//printf("all_move	1.2\n");			
 			}
 
-			printf("all_move	2\n");
+			//printf("all_move	2\n");
 
 			cur_elem++;
 		}

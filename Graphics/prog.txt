@@ -1,0 +1,20 @@
+push 1
+push 1
+add
+popr 2
+fcall :2
+pushr 4
+pop
+end
+meow
+meow
+:2
+pushr 2
+push 3
+mul
+popr 4
+return
+end
+
+
+

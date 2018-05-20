@@ -37,6 +37,8 @@ sf::Clock *Pclock;
 #include"libs/animation_lib.h"
 #include"libs/manager_lib.h"
 #include"libs/hero_lib.h"
+#include"libs/meny_lib.h"
+#include"prog_part/redactor.h"
 #include"libs/enemy_lib.h"
 #include"libs/bullet_lib.h"
 #include"libs/boss_lib.h"
@@ -100,6 +102,8 @@ int game_start(void);
 sf::Texture texture_upload(char *str);
 
 int main_menu_proc(int cur_menu_part);
+int main_menu_start(void);
+void kills_setter(void);
 
 //===================================================================
 //! This programm contain my trying in graphics
@@ -111,6 +115,7 @@ int main()
 	int my_error = 0;
 
 	my_error = game_start();    
+	//my_error = main_menu_start();
 
     return 0;
 }
@@ -143,6 +148,16 @@ int game_start(void)
 	sf::Time last_shoot_time;
 
 	Pclock = &main_clock;
+
+	int my_error = main_menu_start();////////////
+
+	while(my_error != 1)
+	{
+		if(my_error == -1)
+			return 0;
+
+		my_error = main_menu_start();
+	}
 
 	sf::Texture vilka_texture;
 	sf::Texture enemy_texture;
@@ -269,7 +284,10 @@ int game_start(void)
         }
 
 		if(Kill_counter >= 50 && burger.is_alive == false)
+		{
 			burger.is_alive = true;		//boss spawn
+			burger.hp = burger.max_hp;
+		}
 		else if(Kill_counter >= 50 && burger.is_alive == true)
 			Kill_counter = 0;
 
@@ -453,24 +471,112 @@ sf::Texture texture_upload(char *str)
 //================================================================
 int main_menu_proc(int cur_menu_part)
 {
-	int my_error = 0;
+	//FILE *log = fopen("menu_log","w");
+	
+	int my_error = 100;
 
 	if(cur_menu_part == 0)
-		my_error = game_start();   
+		my_error = 1;   
 	else if(cur_menu_part == 1)
 	{
-		if(Difficulty != 3)
-			Difficulty++;
-		else
-			Difficulty = 1;
+		kills_setter();
+		my_error = 20;
 	}
 		
 	return my_error;
 }
 
 
+//=================================================================
+//!
+//! This function init & run main menu
+//!
+//=================================================================
+int main_menu_start(void)
+{
+	c_animation pointer_animation(4);
+	sf::Texture part_texture;
+	sf::Sprite *part_sprites = new sf::Sprite [3];
+
+	pointer_animation.frame_massive[0].frame_delay = sf::seconds(0.8f);
+	pointer_animation.frame_massive[1].frame_delay = sf::seconds(0.2f);
+	pointer_animation.frame_massive[2].frame_delay = sf::seconds(0.1f);
+	pointer_animation.frame_massive[3].frame_delay = sf::seconds(0.1f);
+
+	try
+	{
+		pointer_animation.frame_massive[0].texture = texture_upload("main_menu/cursor_1.png");
+		pointer_animation.frame_massive[1].texture = texture_upload("main_menu/cursor_2.png");
+		pointer_animation.frame_massive[2].texture = texture_upload("main_menu/cursor_3.png");
+		pointer_animation.frame_massive[3].texture = texture_upload("main_menu/cursor_4.png");
+
+		part_texture = texture_upload("main_menu/menu_textures.png");
+	}
+	catch(char *str)
+	{
+		printf("!!! Error with open %s !!!\n", str);
+		assert(false);
+	}
+
+	part_sprites[0].setTexture(part_texture);
+	part_sprites[0].setOrigin(0, 0);
+	part_sprites[0].setPosition(300, 200);
+	part_sprites[0].setTextureRect(sf::IntRect(0, 0, 256, 37));
+
+	part_sprites[1].setTexture(part_texture);
+	part_sprites[1].setOrigin(0, 0);
+	part_sprites[1].setPosition(300, 250);
+	part_sprites[1].setTextureRect(sf::IntRect(0, 38, 256, 37));
+
+	part_sprites[2].setTexture(part_texture);
+	part_sprites[2].setOrigin(0, 0);
+	part_sprites[2].setPosition(300, 300);
+	part_sprites[2].setTextureRect(sf::IntRect(0, 76, 256, 37));
+
+	c_menu main_menu(part_sprites, 3,  &pointer_animation, &pointer_animation);
+
+	int ret = main_menu.menu_call(main_menu_proc);
+
+	delete [] part_sprites;
+
+	return ret;
+}
 
 
+//========================================================================================
+//! 
+//! This function contain redactor (NI) and reader from pipe of start kills 
+//!
+//========================================================================================
+void kills_setter(void)
+{
+	int ret = redactor_main_body();
+
+	if(ret < 0)
+	{
+		printf(">>> Error in compiller");
+		assert(false);
+	}
+	else if(ret > 0)
+	{
+		printf(">>> It's okay, but i need to stop the game c:");
+		assert(false);
+	}	
+
+	//	FILE *pipe = fopen("prog_part/pipe.txt","r");
+	FILE *pipe = fopen("pipe.txt","r");
+	int c = fgetc(pipe);
+
+	if('0' <= c && c <= '9')
+		Kill_counter = (c - 48) * 10;
+	else
+	{
+		printf("ERROR IN PIPE FILE\n");
+		assert(1 == 0);
+	}
+
+	printf("KK = %d\n", Kill_counter);
+}
 
 
 
